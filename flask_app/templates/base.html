@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Character Tiers</title>
+</head>
+<body>
+    <h1>Character Tiers</h1>
+    
+    <form action="/predict" method="POST">
+        <label for="gold_left">남은 골드:</label>
+        <input type="number" id="gold_left" name="gold_left" min="0"><br>
+        
+        <label for="last_round">라운드수:</label>
+        <input type="number" id="last_round" name="last_round" min="0"><br>
+        
+        <label for="level">꼬마 전설이 레벨:</label>
+        <input type="number" id="level" name="level" min="0"><br>
+        
+        <label for="players_eliminated">죽인 플레이어수:</label>
+        <input type="number" id="players_eliminated" name="players_eliminated" min="0"><br>
+        
+        <label for="time_eliminated">생존시간:</label>
+        <input type="text" id="time_eliminated" name="time_eliminated" step="any"><br>
+        
+        <label for="total_damage">총 데미지:</label>
+        <input type="number" id="total_damage" name="total_damage" min="0"><br>
+        {% for character in target_character_id %}
+        <div>
+            <label for="{{ character }}">{{ character }}</label>
+            <input type="radio" id="{{ character }}_1" name="{{ character }}" value="1">
+            <label for="{{ character }}_1">1 Star</label>
+            <input type="radio" id="{{ character }}_2" name="{{ character }}" value="2">
+            <label for="{{ character }}_2">2 Stars</label>
+            <input type="radio" id="{{ character }}_3" name="{{ character }}" value="3">
+            <label for="{{ character }}_3">3 Stars</label>
+        </div>
+        {% endfor %}
+        
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
