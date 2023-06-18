@@ -3,7 +3,7 @@ from flask import Flask, render_template, request
 import pickle
 
 # 현재 파일의 절대 경로를 기반으로 모델 파일의 경로를 지정
-model_path = os.path.join(os.path.dirname(__file__), '../models/model.pkl')
+model_path = os.path.join(os.path.dirname(__file__), './models/model.pkl')
 
 # 모델 로드
 with open(model_path, 'rb') as file:
