@@ -4,6 +4,8 @@ from flask import Flask, render_template, request
 import pickle
 import numpy as np
 import psycopg2
+from apscheduler.schedulers.blocking import BlockingScheduler
+from TFT_DB import collect_data
 
 # 현재 파일의 절대 경로를 기반으로 모델 파일의 경로를 지정
 model_path = os.path.join(os.path.dirname(__file__), './models/model.pkl')
@@ -87,4 +89,8 @@ def dashboard():
     return render_template('dashboard.html')
 
 if __name__ == '__main__':
+    # 스케줄러 생성 및 작업 추가
+    scheduler = BlockingScheduler()
+    scheduler.add_job(collect_data, 'interval', hours=1)  # 매 시간마다 실행
+    scheduler.start()
     app.run(host='0.0.0.0')

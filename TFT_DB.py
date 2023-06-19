@@ -2,7 +2,6 @@ import psycopg2
 import requests
 import pandas as pd
 import json
-from apscheduler.schedulers.blocking import BlockingScheduler
 
 def collect_data():
     conn = psycopg2.connect(
@@ -75,8 +74,3 @@ def collect_data():
     conn.commit()
     cur.close()
     conn.close()
-
-# 스케줄러 생성 및 작업 추가
-scheduler = BlockingScheduler()
-scheduler.add_job(collect_data, 'interval', hours=1)  # 매 시간마다 실행
-scheduler.start()
