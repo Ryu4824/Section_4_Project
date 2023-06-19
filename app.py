@@ -1,6 +1,9 @@
+import json
 import os
 from flask import Flask, render_template, request
 import pickle
+import numpy as np
+import psycopg2
 
 # 현재 파일의 절대 경로를 기반으로 모델 파일의 경로를 지정
 model_path = os.path.join(os.path.dirname(__file__), './models/model.pkl')
@@ -50,17 +53,34 @@ def predict():
         'time_eliminated': time_eliminated,
         'total_damage': total_damage
     }
-
+    result_list = []
     for character in target_character_id:
         selected_value = request.form.get(character)
         if selected_value:
             input_values[character] = int(selected_value)
+            character_data = {"tier": int(selected_value), "character_id": character}
+            result_list.append(character_data)
         else:
             input_values[character] = 0
-
+    result_list_json = json.dumps(result_list)
     # 입력된 값들을 모델에 전달하여 예측 수행
-    prediction = model.predict([list(input_values.values())])
-    return render_template('predict.html', prediction=prediction)
+    prediction = np.round(model.predict([list(input_values.values())]))
+    prediction_value = int(prediction[0])
+    print(prediction_value)
+    conn = psycopg2.connect(
+        host="rajje.db.elephantsql.com",
+        database="zgsqyxsv",
+        user="zgsqyxsv",
+        password="VqWkTqO1ZHAfB1kS9U0KrsewfimwdlV1"
+        )
+    cur = conn.cursor()
+    cur.execute("INSERT INTO TFT_DB VALUES (%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT DO NOTHING;",
+                (gold_left, last_round, level, players_eliminated, time_eliminated,
+                total_damage,result_list_json, prediction_value))
+    conn.commit()
+    cur.close()
+    conn.close()
+    return render_template('predict.html', prediction=prediction_value)
 
 @app.route('/dashboard')
 def dashboard():
